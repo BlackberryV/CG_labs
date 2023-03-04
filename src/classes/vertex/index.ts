@@ -1,19 +1,19 @@
 import Ray from '../ray';
 import Vector from '../vector';
 
-export default class Vertex {
+export default class Vernex {
   public position: Vector;
 
   constructor(position: Vector) {
     this.position = position;
   }
 
-  public getRayTo(other: Vertex): Ray {
+  public getRayTo(other: Vernex): Ray {
     const direction = other.position.subtract(this.position);
     return new Ray(this.position, direction);
   }
 
-  public getLengthTo(vertex: Vertex) {
+  public getLengthTo(vertex: Vernex) {
     const { x: thisX, y: thisY, z: thisZ } = this.position;
     const { x: vertexX, y: vertexY, z: vertexZ } = vertex.position;
     return Math.sqrt(

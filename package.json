@@ -1,0 +1,30 @@
+{
+  "name": "cg-labs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlackberryV/CG_labs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BlackberryV/CG_labs/issues"
+  },
+  "homepage": "https://github.com/BlackberryV/CG_labs#readme",
+  "dependencies": {
+    "@types/node": "^18.14.6"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "eslint": "^8.35.0",
+    "prettier": "2.8.4"
+  }
+}

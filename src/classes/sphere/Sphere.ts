@@ -1,5 +1,5 @@
-import Ray from '../ray';
-import Vector from '../vector';
+import Ray from '../ray/Ray';
+import Vector from '../vector/Vector';
 
 export default class Sphere {
   public center: Vector;

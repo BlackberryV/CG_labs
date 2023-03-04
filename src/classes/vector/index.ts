@@ -38,6 +38,10 @@ export default class Vector {
     return new Vector(this.x / mag, this.y / mag, this.z / mag);
   }
 
+  public scale(factor: number): Vector {
+    return new Vector(this.x * factor, this.y * factor, this.z * factor);
+  }
+
   public cross(other: Vector): Vector {
     return new Vector(
       this.y * other.z - this.z * other.y,

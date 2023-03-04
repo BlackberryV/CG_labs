@@ -13,6 +13,10 @@ export default class Ray {
     return this.origin.add(this.direction.multiply(t));
   }
 
+  public getPoint(t: number): Vector {
+    return this.origin.add(this.direction.scale(t));
+  }
+
   public isPointInside(point: Vector): boolean {
     const pointDirection = point.subtract(this.origin);
     const dotProduct = pointDirection.dot(this.direction);

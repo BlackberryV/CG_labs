@@ -42,11 +42,20 @@ export default class Vector {
     return new Vector(this.x * factor, this.y * factor, this.z * factor);
   }
 
+  // perpendicular | normal
   public cross(other: Vector): Vector {
     return new Vector(
       this.y * other.z - this.z * other.y,
       this.z * other.x - this.x * other.z,
       this.x * other.y - this.y * other.x
     );
+  }
+
+  // distance to another vector
+  public distanceTo(other: Vector): number {
+    const dx = other.x - this.x;
+    const dy = other.y - this.y;
+    const dz = other.z - this.z;
+    return Math.sqrt(dx * dx + dy * dy + dz * dz);
   }
 }

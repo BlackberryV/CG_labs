@@ -12,23 +12,27 @@ export default class Disk {
     this.radius = radius;
   }
 
-  public intersect(ray: Ray): number | null {
+  public getIntersection(ray: Ray): Vector[] {
+    const result: Vector[] = [];
+
     const denominator = this.normal.dot(ray.direction);
     if (denominator == 0) {
-      return null;
+      return result;
     }
 
     const t = this.normal.dot(this.center.subtract(ray.origin)) / denominator;
     if (t < 0) {
-      return null;
+      return result;
     }
 
     const point = ray.getPoint(t);
     const distance = this.center.distanceTo(point);
     if (distance > this.radius) {
-      return null;
+      return result;
     }
 
-    return t;
+    const intersectionPoint = ray.getPoint(t);
+    result.push(intersectionPoint);
+    return result;
   }
 }

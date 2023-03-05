@@ -21,8 +21,8 @@ describe('Vector', () => {
 
   describe('multiply', () => {
     it('multiply a vector by a scalar', () => {
-      const v = new Vector(1, 2, 3);
-      const result = v.multiply(2);
+      const vector = new Vector(1, 2, 3);
+      const result = vector.multiply(2);
       expect(result).toEqual(new Vector(2, 4, 6));
     });
   });
@@ -38,34 +38,34 @@ describe('Vector', () => {
 
   describe('divide', () => {
     it('divide a vector by a scalar', () => {
-      const v = new Vector(4, 8, 12);
-      const result = v.divide(2);
+      const vector = new Vector(4, 8, 12);
+      const result = vector.divide(2);
       expect(result).toEqual(new Vector(2, 4, 6));
     });
   });
 
   describe('magnitude', () => {
     it('calculate the magnitude of a vector', () => {
-      const v = new Vector(1, 2, 3);
-      const result = v.magnitude();
-      const m = Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2);
+      const vector = new Vector(1, 2, 3);
+      const result = vector.magnitude();
+      const m = Math.sqrt(vector.x ** 2 + vector.y ** 2 + vector.z ** 2);
       expect(result).toBe(m);
     });
   });
 
   describe('normalize', () => {
     it('normalize a vector', () => {
-      const v = new Vector(1, 2, 3);
-      const result = v.normalize();
-      const m = Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2);
+      const vector = new Vector(1, 2, 3);
+      const result = vector.normalize();
+      const m = Math.sqrt(vector.x ** 2 + vector.y ** 2 + vector.z ** 2);
       expect(result).toEqual(new Vector(1 / m, 2 / m, 3 / m));
     });
   });
 
   describe('scale', () => {
     it('scale a vector by a factor', () => {
-      const v = new Vector(10, 3, 8);
-      const result = v.scale(2);
+      const vector = new Vector(10, 3, 8);
+      const result = vector.scale(2);
       expect(result).toEqual(new Vector(20, 6, 16));
     });
   });

@@ -39,7 +39,6 @@ export default function rayTracer(): void {
 
       let char = ' ';
       const intersectionPoint = object.getIntersection(ray);
-      // console.log(ray)
       if (intersectionPoint === null) {
         char = " "
       }else {

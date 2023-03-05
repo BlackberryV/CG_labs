@@ -26,7 +26,7 @@ export default class Sphere {
     }
   }
 
-  public getIntersections(ray: Ray): [Vector, Vector] | null {
+  public getIntersection(ray: Ray): Vector | null {
     const oc = ray.origin.subtract(this.center);
     const a = ray.direction.dot(ray.direction);
     const b = 2 * oc.dot(ray.direction);
@@ -40,7 +40,11 @@ export default class Sphere {
       const t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
       const p1 = ray.pointAtParameter(t1);
       const p2 = ray.pointAtParameter(t2);
-      return [p1, p2];
+      return p1.distanceTo(ray.origin) > p2.distanceTo(ray.origin) ? p2 : p1;
     }
+  }
+  getNormal(point: Vector): Vector {
+    const normal = point.subtract(this.center);
+    return normal.normalize();
   }
 }

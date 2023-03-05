@@ -1,7 +1,7 @@
 import Ray from '../ray/Ray';
 import Vector from '../vector/Vector';
 
-class Plane {
+export default class Plane {
   public normal: Vector;
   public point: Vector;
 

@@ -1,1 +1,3 @@
-console.log('asdf');
+import rayTracer from "./rayTrace/rayTracer";
+
+rayTracer()

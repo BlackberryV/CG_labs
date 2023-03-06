@@ -25,21 +25,21 @@ describe('Sphere', () => {
     });
   });
 
-  describe('getIntersections', () => {
+  describe('getIntersection', () => {
     it('return vectors of intersection (null)', () => {
       const origin = new Vector(0, 6, -6);
       const direction = new Vector(0, 0, 3);
       const ray = new Ray(origin, direction);
 
-      expect(sphere.getIntersections(ray)).toBeNull();
+      expect(sphere.getIntersection(ray)).toBeNull();
     });
 
-    it('should return two intersection points when ray intersects sphere twice', () => {
+    it('return intersection point when ray intersects sphere', () => {
         const origin = new Vector(0, 0, -6);
         const direction = new Vector(0, 0, 3);
         const ray = new Ray(origin, direction);
   
-        expect(!!sphere.getIntersections(ray)?.length).toBeTruthy();
+        expect(sphere.getIntersection(ray)).toEqual(new Vector(0, 0, -3));
       });
   });
 });

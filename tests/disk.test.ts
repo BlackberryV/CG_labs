@@ -35,7 +35,6 @@ describe('Disk', () => {
       const direction = new Vector(0, 0, 1);
       const ray = new Ray(origin, direction);
       const expected = [new Vector(0, 0, 0)];
-      console.log(disk.getIntersection(ray))
       expect(disk.getIntersection(ray)).toEqual(expected);
     });
   });

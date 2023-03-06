@@ -30,7 +30,6 @@ describe('Sphere', () => {
       const origin = new Vector(0, 6, -6);
       const direction = new Vector(0, 0, 3);
       const ray = new Ray(origin, direction);
-      console.log(sphere.getIntersections(ray))
 
       expect(sphere.getIntersections(ray)).toBeNull();
     });

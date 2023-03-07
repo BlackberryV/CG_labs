@@ -14,7 +14,7 @@ export default class Ray {
   }
 
   public getPoint(t: number): Vector {
-    return this.origin.add(this.direction.scale(t));
+    return this.origin.add(this.direction.multiply(t));
   }
 
   public isPointInside(point: Vector): boolean {

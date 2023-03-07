@@ -26,7 +26,7 @@ export default class Disk {
     }
 
     const point = ray.getPoint(t);
-    const distance = this.center.distanceTo(point);
+    const distance = this.center.getDistanceTo(point);
     if (distance > this.radius) {
       return result;
     }

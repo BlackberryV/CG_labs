@@ -25,25 +25,13 @@ export default class Vector {
     return this.x * other.x + this.y * other.y + this.z * other.z;
   }
 
-  public divide(scalar: number): Vector {
-    return new Vector(this.x / scalar, this.y / scalar, this.z / scalar);
-  }
-
-  public magnitude(): number {
-    return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
-  }
-
   public normalize(): Vector {
-    const mag = this.magnitude();
-    return new Vector(this.x / mag, this.y / mag, this.z / mag);
+    const length = Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
+    return new Vector(this.x / length, this.y / length, this.z / length);
   }
 
-  public scale(factor: number): Vector {
-    return new Vector(this.x * factor, this.y * factor, this.z * factor);
-  }
-
-  // perpendicular | normal
-  public cross(other: Vector): Vector {
+  //not used
+  public getNormal(other: Vector): Vector {
     return new Vector(
       this.y * other.z - this.z * other.y,
       this.z * other.x - this.x * other.z,
@@ -51,8 +39,8 @@ export default class Vector {
     );
   }
 
-  // distance to another vector
-  public distanceTo(other: Vector): number {
+  //nont used
+  public getDistanceTo(other: Vector): number {
     const dx = other.x - this.x;
     const dy = other.y - this.y;
     const dz = other.z - this.z;

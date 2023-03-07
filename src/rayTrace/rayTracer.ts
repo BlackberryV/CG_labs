@@ -1,6 +1,6 @@
 import Vector from '../classes/vector/Vector';
 import Ray from '../classes/ray/Ray';
-import Sphere from '../classes/sphere/Sphere';
+import { IRayTracer } from '../types/rayTracer';
 
 function charFromScalarProduct(scalarProduct: number): string {
   if (scalarProduct < 0) {
@@ -16,21 +16,20 @@ function charFromScalarProduct(scalarProduct: number): string {
   }
 }
 
-export default function rayTracer(): void {
-  const screenWidth = 20;
-  const screenHeight = 20;
-  const cameraPosition = new Vector(0, 0, 0);
-  const screenDistance = 10;
+export default function rayTracer({
+  screenDistance,
+  screenDown,
+  screenHeight,
+  screenRight,
+  screenWidth,
+  cameraPosition,
+  lightDirection,
+  objects,
+}: IRayTracer): void {
   const screenCenter = new Vector(0, 0, screenDistance);
-  const screenDown = new Vector(0, -1, 0);
-  const screenRight = new Vector(1, 0, 0);
   const screenTop = screenDown.multiply(-screenHeight / 2);
   const screenLeft = screenRight.multiply(-screenWidth / 2);
   const screenStart = screenCenter.add(screenTop).add(screenLeft);
-
-  const object = new Sphere(new Vector(0, 0, 20), 5);
-
-  const lightDirection = new Vector(-1, -1, -1).normalize();
 
   for (let y = 0; y < screenHeight; y++) {
     for (let x = 0; x < screenWidth; x++) {
@@ -41,11 +40,11 @@ export default function rayTracer(): void {
       const ray = new Ray(cameraPosition, direction);
 
       let char = ' ';
-      const intersectionPoint = object.getIntersection(ray);
+      const intersectionPoint = objects[0].getIntersection(ray);
       if (intersectionPoint === null) {
         char = ' ';
       } else {
-        const normal = object.getNormal(intersectionPoint);
+        const normal = objects[0].getNormal(intersectionPoint);
         const dotProduct = normal.dot(lightDirection);
         char = charFromScalarProduct(dotProduct);
       }

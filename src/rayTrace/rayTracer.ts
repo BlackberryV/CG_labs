@@ -40,13 +40,28 @@ export default function rayTracer({
       const ray = new Ray(cameraPosition, direction);
 
       let char = ' ';
-      const intersectionPoint = objects[0].getIntersection(ray);
-      if (intersectionPoint === null) {
-        char = ' ';
-      } else {
-        const normal = objects[0].getNormal(intersectionPoint);
-        const dotProduct = normal.dot(lightDirection);
-        char = charFromScalarProduct(dotProduct);
+      let closestIntersection: Vector | null = null;
+      let closestObject = null;
+      for (const object of objects) {
+        const intersectionPoint = object.getIntersection(ray);
+        if (
+          intersectionPoint &&
+          (!closestIntersection ||
+            intersectionPoint.distanceTo(cameraPosition) <
+              closestIntersection.getDistanceTo(cameraPosition))
+        ) {
+          closestIntersection = intersectionPoint;
+          closestObject = object;
+        }
+      }
+      if (closestIntersection) {
+        if (closestObject === null) {
+          char = ' ';
+        } else {
+          const normal = closestObject.getNormal(closestIntersection);
+          const dotProduct = normal.dot(lightDirection);
+          char = charFromScalarProduct(dotProduct);
+        }
       }
       process.stdout.write(char);
     }

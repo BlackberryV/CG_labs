@@ -35,4 +35,8 @@ export default class Disk {
     result.push(intersectionPoint);
     return result;
   }
+
+  public getNormal(){
+    return this.normal
+  }
 }

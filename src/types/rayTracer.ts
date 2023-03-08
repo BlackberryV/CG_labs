@@ -2,7 +2,7 @@ import Sphere from '../classes/sphere/Sphere';
 import Vector from '../classes/vector/Vector';
 
 export interface IRayTracer {
-  objects: Sphere[];
+  objects: any[];
   screenWidth: number;
   screenHeight: number;
   cameraPosition: Vector;

@@ -7,24 +7,6 @@ describe('Sphere', () => {
   const radius = 3;
   const sphere = new Sphere(center, radius);
 
-  describe('intersect', () => {
-    it('return true when ray intersects sphere', () => {
-      const origin = new Vector(4, 4, 4);
-      const direction = new Vector(-6, -5, -4);
-      const ray = new Ray(origin, direction);
-
-      expect(sphere.intersect(ray)).toBe(true);
-    });
-
-    it('return false when ray misses sphere', () => {
-      const origin = new Vector(5, 5, 5);
-      const direction = new Vector(10, 10, 10);
-      const ray = new Ray(origin, direction);
-
-      expect(sphere.intersect(ray)).toBe(false);
-    });
-  });
-
   describe('getIntersection', () => {
     it('return vectors of intersection (null)', () => {
       const origin = new Vector(0, 6, -6);

@@ -47,7 +47,7 @@ export default function rayTracer({
         if (
           intersectionPoint &&
           (!closestIntersection ||
-            intersectionPoint.distanceTo(cameraPosition) <
+            intersectionPoint.getDistanceTo(cameraPosition) <
               closestIntersection.getDistanceTo(cameraPosition))
         ) {
           closestIntersection = intersectionPoint;

@@ -1,12 +1,12 @@
 import Ray from '../ray/Ray';
 import Vector from '../vector/Vector';
 
-export default class Plane {
+export default class Plain {
   public normal: Vector;
   public point: Vector;
 
   constructor(normal: Vector, point: Vector) {
-    this.normal = normal;
+    this.normal = normal.normalize();
     this.point = point;
   }
 
@@ -20,5 +20,8 @@ export default class Plane {
       return null;
     }
     return ray.getPoint(t);
+  }
+  public getNormal(){
+    return this.normal
   }
 }

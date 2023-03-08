@@ -1,4 +1,3 @@
-import Sphere from '../classes/sphere/Sphere';
 import Vector from '../classes/vector/Vector';
 
 export interface IRayTracer {

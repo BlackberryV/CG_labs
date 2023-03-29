@@ -1,70 +1,78 @@
 import Vector from '../classes/vector/Vector';
 import Ray from '../classes/ray/Ray';
-import { IRayTracer } from '../types/rayTracer';
+import Camera from "../classes/camera/Camera";
+import Screen from "../classes/screen/Screen";
 
-function charFromScalarProduct(scalarProduct: number): string {
-  if (scalarProduct < 0) {
-    return ' ';
-  } else if (scalarProduct < 0.2) {
-    return '.';
-  } else if (scalarProduct < 0.5) {
-    return '*';
-  } else if (scalarProduct < 0.8) {
-    return 'O';
-  } else {
-    return '#';
+export default class Raytracer {
+  private camera: Camera;
+  private screen: Screen;
+
+  constructor(camera: Camera, screen: Screen) {
+    this.camera = camera;
+    this.screen = screen;
   }
-}
 
-export default function rayTracer({
-  screenDistance,
-  screenDown,
-  screenHeight,
-  screenRight,
-  screenWidth,
-  cameraPosition,
-  lightDirection,
-  objects,
-}: IRayTracer): void {
-  const screenCenter = new Vector(0, 0, screenDistance);
-  const screenTop = screenDown.multiply(-screenHeight / 2);
-  const screenLeft = screenRight.multiply(-screenWidth / 2);
-  const screenStart = screenCenter.add(screenTop).add(screenLeft);
+  trace(objects: any[], lightDirection: Vector): void {
+    for (let x = 0; x < this.screen.getWidth(); x++) {
+      for (let y = 0; y < this.screen.getHeight(); y++) {
+        const ray = this.calculateRay(x, y);
 
-  for (let y = 0; y < screenHeight; y++) {
-    for (let x = 0; x < screenWidth; x++) {
-      const direction = screenStart
-        .add(screenRight.multiply(x))
-        .add(screenDown.multiply(y))
-        .subtract(cameraPosition);
-      const ray = new Ray(cameraPosition, direction);
-
-      let char = ' ';
-      let closestIntersection: Vector | null = null;
-      let closestObject = null;
-      for (const object of objects) {
-        const intersectionPoint = object.getIntersection(ray);
-        if (
-          intersectionPoint &&
-          (!closestIntersection ||
-            intersectionPoint.getDistanceTo(cameraPosition) <
-              closestIntersection.getDistanceTo(cameraPosition))
-        ) {
-          closestIntersection = intersectionPoint;
-          closestObject = object;
+        let char = ' ';
+        let closestIntersection: Vector | null = null;
+        let closestObject = null;
+        for (const object of objects) {
+          const intersectionPoint = object.getIntersection(ray);
+          if (
+            intersectionPoint &&
+            (!closestIntersection ||
+              intersectionPoint.getDistanceTo(this.camera.getPosition()) <
+              closestIntersection.getDistanceTo(this.camera.getPosition()))
+          ) {
+            closestIntersection = intersectionPoint;
+            closestObject = object;
+          }
         }
-      }
-      if (closestIntersection) {
-        if (closestObject === null) {
-          char = ' ';
-        } else {
-          const normal = closestObject.getNormal(closestIntersection);
-          const dotProduct = normal.dot(lightDirection);
-          char = charFromScalarProduct(dotProduct);
+        if (closestIntersection) {
+          if (closestObject === null) {
+            char = ' ';
+          } else {
+            const normal = closestObject.getNormal(closestIntersection);
+            const dotProduct = normal.dot(lightDirection);
+            char = this.charFromScalarProduct(dotProduct);
+          }
         }
+        process.stdout.write(char);
       }
-      process.stdout.write(char);
+      process.stdout.write('\n');
     }
-    process.stdout.write('\n');
+  }
+
+  private charFromScalarProduct(scalarProduct: number): string {
+    if (scalarProduct < 0) {
+      return ' ';
+    } else if (scalarProduct < 0.2) {
+      return '.';
+    } else if (scalarProduct < 0.5) {
+      return '*';
+    } else if (scalarProduct < 0.8) {
+      return 'O';
+    } else {
+      return '#';
+    }
+  }
+
+  private calculateRay(x: number, y: number): Ray {
+    const halfScreenWidth = this.screen.getWidth() / 2;
+    const halfScreenHeight = this.screen.getHeight() / 2;
+    const fov = this.camera.getFOV();
+    const aspectRatio = this.screen.getWidth() / this.screen.getHeight();
+
+    const screenX = (x + 0.5) - halfScreenWidth;
+    const screenY = (y + 0.5) - halfScreenHeight;
+
+    const cameraX = screenX / halfScreenWidth * aspectRatio * Math.tan(fov / 2);
+    const cameraY = -screenY / halfScreenHeight * Math.tan(fov / 2);
+
+    return new Ray(this.camera.getPosition(), new Vector(cameraX, cameraY, -1));
   }
 }

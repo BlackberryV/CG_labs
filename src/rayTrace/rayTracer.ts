@@ -13,13 +13,15 @@ export default class Raytracer {
   }
 
   trace(objects: any[], lightDirection: Vector): void {
+    const pixels = [];
     for (let x = 0; x < this.screen.getWidth(); x++) {
       for (let y = 0; y < this.screen.getHeight(); y++) {
-        const ray = this.calculateRay(x, y);
+        const ray = this.calculateRay(x*2, y);
 
-        let char = ' ';
+        let color = new Vector(0,0,0);
         let closestIntersection: Vector | null = null;
         let closestObject = null;
+
         for (const object of objects) {
           const intersectionPoint = object.getIntersection(ray);
           if (
@@ -34,32 +36,32 @@ export default class Raytracer {
         }
         if (closestIntersection) {
           if (closestObject === null) {
-            char = ' ';
+            color = new Vector(0, 0, 0);
           } else {
             const normal = closestObject.getNormal(closestIntersection);
             const dotProduct = normal.dot(lightDirection);
-            char = this.charFromScalarProduct(dotProduct);
+            color = new Vector(255, 255, 255).multiply(dotProduct);
           }
         }
-        process.stdout.write(char);
+        pixels.push(`${color.x} ${color.y} ${color.z}`)
       }
-      process.stdout.write('\n');
     }
+    console.log(pixels[5000])
   }
 
-  private charFromScalarProduct(scalarProduct: number): string {
-    if (scalarProduct < 0) {
-      return ' ';
-    } else if (scalarProduct < 0.2) {
-      return '.';
-    } else if (scalarProduct < 0.5) {
-      return '*';
-    } else if (scalarProduct < 0.8) {
-      return 'O';
-    } else {
-      return '#';
-    }
-  }
+  // private charFromScalarProduct(scalarProduct: number): string {
+  //   if (scalarProduct < 0) {
+  //     return ' ';
+  //   } else if (scalarProduct < 0.2) {
+  //     return '.';
+  //   } else if (scalarProduct < 0.5) {
+  //     return '*';
+  //   } else if (scalarProduct < 0.8) {
+  //     return 'O';
+  //   } else {
+  //     return '#';
+  //   }
+  // }
 
   private calculateRay(x: number, y: number): Ray {
     const halfScreenWidth = this.screen.getWidth() / 2;

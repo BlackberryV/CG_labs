@@ -30,7 +30,6 @@ export default class Vector {
     return new Vector(this.x / length, this.y / length, this.z / length);
   }
 
-  //not used
   public getNormal(other: Vector): Vector {
     return new Vector(
       this.y * other.z - this.z * other.y,
@@ -39,11 +38,18 @@ export default class Vector {
     );
   }
 
-  //nont used
   public getDistanceTo(other: Vector): number {
     const dx = other.x - this.x;
     const dy = other.y - this.y;
     const dz = other.z - this.z;
     return Math.sqrt(dx * dx + dy * dy + dz * dz);
+  }
+
+  public cross(v: Vector): Vector {
+    return new Vector(
+      this.y * v.z - this.z * v.y,
+      this.z * v.x - this.x * v.z,
+      this.x * v.y - this.y * v.x
+    );
   }
 }

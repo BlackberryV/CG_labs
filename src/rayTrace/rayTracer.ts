@@ -1,3 +1,4 @@
+import fs from 'fs';
 import Vector from '../classes/vector/Vector';
 import Ray from '../classes/ray/Ray';
 import Camera from "../classes/camera/Camera";
@@ -12,13 +13,16 @@ export default class Raytracer {
     this.screen = screen;
   }
 
-  trace(objects: any[], lightDirection: Vector): void {
-    const pixels = [];
-    for (let x = 0; x < this.screen.getWidth(); x++) {
-      for (let y = 0; y < this.screen.getHeight(); y++) {
-        const ray = this.calculateRay(x*2, y);
+  trace(objects: any[], lightDirection: Vector, outputFile: string): void {
+    const imageData: Vector[][] = [];
 
-        let color = new Vector(0,0,0);
+    for (let y = 0; y < this.screen.getHeight(); y++) {
+      imageData[y] = [];
+
+      for (let x = 0; x < this.screen.getWidth(); x++) {
+        const ray = this.calculateRay(x, y);
+
+        // let color = new Vector(0,0,0);
         let closestIntersection: Vector | null = null;
         let closestObject = null;
 
@@ -36,32 +40,30 @@ export default class Raytracer {
         }
         if (closestIntersection) {
           if (closestObject === null) {
-            color = new Vector(0, 0, 0);
+            imageData[y][x] = new Vector(0, 0, 0);
           } else {
             const normal = closestObject.getNormal(closestIntersection);
             const dotProduct = normal.dot(lightDirection);
-            color = new Vector(255, 255, 255).multiply(dotProduct);
+            if (dotProduct < 0) {
+              imageData[y][x] = new Vector(0, 0, 0);
+            } else {
+              imageData[y][x] = new Vector(255, 255, 255).multiply(dotProduct);
+            }
           }
+        } else {
+          imageData[y][x] = new Vector(0, 0, 0);
         }
-        pixels.push(`${color.x} ${color.y} ${color.z}`)
       }
-    }
-    console.log(pixels[5000])
-  }
 
-  // private charFromScalarProduct(scalarProduct: number): string {
-  //   if (scalarProduct < 0) {
-  //     return ' ';
-  //   } else if (scalarProduct < 0.2) {
-  //     return '.';
-  //   } else if (scalarProduct < 0.5) {
-  //     return '*';
-  //   } else if (scalarProduct < 0.8) {
-  //     return 'O';
-  //   } else {
-  //     return '#';
-  //   }
-  // }
+      const header = `P3\n${this.screen.getWidth()} ${this.screen.getHeight()}\n255\n`;
+      const body = imageData
+        .map((row) => row.map((v) => `${Math.round(v.x)} ${Math.round(v.y)} ${Math.round(v.z)}`).join(' '))
+        .join('\n');
+
+      const fileData = `${header}${body}`;
+      fs.writeFileSync(outputFile, fileData);
+    }
+  }
 
   private calculateRay(x: number, y: number): Ray {
     const halfScreenWidth = this.screen.getWidth() / 2;

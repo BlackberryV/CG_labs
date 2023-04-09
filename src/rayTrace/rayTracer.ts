@@ -1,8 +1,9 @@
 import fs from 'fs';
 import Vector from '../classes/vector/Vector';
 import Ray from '../classes/ray/Ray';
-import Camera from "../classes/camera/Camera";
-import Screen from "../classes/screen/Screen";
+import Camera from '../classes/camera/Camera';
+import Screen from '../classes/screen/Screen';
+import Triangle from '../classes/triangle/Triangle';
 
 export default class Raytracer {
   private camera: Camera;
@@ -13,7 +14,7 @@ export default class Raytracer {
     this.screen = screen;
   }
 
-  trace(objects: any[], lightDirection: Vector, outputFile: string): void {
+  trace(objects: Triangle[], lightDirection: Vector, outputFile: string): void {
     const imageData: Vector[][] = [];
 
     for (let y = 0; y < this.screen.getHeight(); y++) {
@@ -32,7 +33,7 @@ export default class Raytracer {
             intersectionPoint &&
             (!closestIntersection ||
               intersectionPoint.getDistanceTo(this.camera.getPosition()) <
-              closestIntersection.getDistanceTo(this.camera.getPosition()))
+                closestIntersection.getDistanceTo(this.camera.getPosition()))
           ) {
             closestIntersection = intersectionPoint;
             closestObject = object;
@@ -47,7 +48,21 @@ export default class Raytracer {
             if (dotProduct < 0) {
               imageData[y][x] = new Vector(0, 0, 0);
             } else {
-              imageData[y][x] = new Vector(255, 255, 255).multiply(dotProduct);
+              const shadowRay = new Ray(closestIntersection, lightDirection.multiply(-1));
+              let inShadow = false;
+              for (const object of objects) {
+                if (object !== closestObject && object.getIntersection(shadowRay)) {
+                  inShadow = true;
+                  break;
+                }
+              }
+              if (inShadow) {
+                imageData[y][x] = new Vector(60, 60, 60);
+              } else {
+                imageData[y][x] = new Vector(255, 255, 255).multiply(
+                  dotProduct
+                );
+              }
             }
           }
         } else {
@@ -57,7 +72,13 @@ export default class Raytracer {
 
       const header = `P3\n${this.screen.getWidth()} ${this.screen.getHeight()}\n255\n`;
       const body = imageData
-        .map((row) => row.map((v) => `${Math.round(v.x)} ${Math.round(v.y)} ${Math.round(v.z)}`).join(' '))
+        .map((row) =>
+          row
+            .map(
+              (v) => `${Math.round(v.x)} ${Math.round(v.y)} ${Math.round(v.z)}`
+            )
+            .join(' ')
+        )
         .join('\n');
 
       const fileData = `${header}${body}`;
@@ -71,12 +92,16 @@ export default class Raytracer {
     const fov = this.camera.getFOV();
     const aspectRatio = this.screen.getWidth() / this.screen.getHeight();
 
-    const screenX = (x + 0.5) - halfScreenWidth;
-    const screenY = (y + 0.5) - halfScreenHeight;
+    const screenX = x + 0.5 - halfScreenWidth;
+    const screenY = y + 0.5 - halfScreenHeight;
 
-    const cameraX = screenX / halfScreenWidth * aspectRatio * Math.tan(fov / 2);
-    const cameraY = -screenY / halfScreenHeight * Math.tan(fov / 2);
+    const cameraX =
+      (screenX / halfScreenWidth) * aspectRatio * Math.tan(fov / 2);
+    const cameraY = (-screenY / halfScreenHeight) * Math.tan(fov / 2);
 
-    return new Ray(this.camera.getPosition(), new Vector(cameraX, cameraY, -1));
+    return new Ray(
+      this.camera.getPosition(),
+      new Vector(-cameraX, -cameraY, 1)
+    );
   }
 }

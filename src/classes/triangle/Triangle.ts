@@ -12,7 +12,7 @@ export default class Triangle {
     this.vertex3 = v3;
   }
 
-  public intersect(ray: Ray): Vector | null {
+  public getIntersection(ray: Ray): Vector | null {
     const EPSILON = 0.000001;
 
     const edge1 = this.vertex2.subtract(this.vertex1);
@@ -41,5 +41,9 @@ export default class Triangle {
       return ray.pointAtParameter(t);
     }
     return null; // intersection point is behind the origin of our ray
+  }
+
+  getNormal(point: Vector): Vector {
+    return new Vector(0,0,-1);
   }
 }

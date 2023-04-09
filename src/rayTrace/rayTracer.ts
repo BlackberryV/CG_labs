@@ -48,14 +48,11 @@ export default class Raytracer {
             if (dotProduct < 0) {
               imageData[y][x] = new Vector(0, 0, 0);
             } else {
-              const shadowRay = new Ray(closestIntersection, lightDirection.multiply(-1));
-              let inShadow = false;
-              for (const object of objects) {
-                if (object !== closestObject && object.getIntersection(shadowRay)) {
-                  inShadow = true;
-                  break;
-                }
-              }
+              const shadowRay = new Ray(
+                closestIntersection,
+                lightDirection.multiply(-1)
+              );
+              const inShadow = this.isInShadow(shadowRay, objects, closestObject);
               if (inShadow) {
                 imageData[y][x] = new Vector(60, 60, 60);
               } else {
@@ -103,5 +100,18 @@ export default class Raytracer {
       this.camera.getPosition(),
       new Vector(-cameraX, -cameraY, 1)
     );
+  }
+  private isInShadow(shadowRay: Ray, objects: any[], closestObject: any): boolean {
+    let inShadow = false;
+    for (const object of objects) {
+      if (
+        object !== closestObject &&
+        object.getIntersection(shadowRay)
+      ) {
+        inShadow = true;
+        break;
+      }
+    }
+    return inShadow
   }
 }

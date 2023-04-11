@@ -23,12 +23,21 @@ const objects = [
   ),
 ];
 
-const triangles = ObjReader.readObjFile('teapot.obj').concat(objects);
 
+const args = process.argv.slice(2);
+
+const srcArg = args.find(arg => arg.includes('--src='));
+const src = srcArg ? srcArg.split('=')[1] : null;
+
+const outArg = args.find(arg => arg.includes('--out='));
+const out = outArg ? outArg.split('=')[1] : null;
+
+
+const triangles = ObjReader.readObjFile(src ? src : 'teapot.obj').concat(objects);
 
 const lightDirection = new Vector(-0.5, -0.5, -1).normalize();
 
-const outputFile = 'output.ppm';
+const outputFile = out ? out :'output.ppm';
 
 const matrixTransformations: MatrixTransformations[] = [
   {

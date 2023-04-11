@@ -64,7 +64,7 @@ export default class Raytracer {
                 closestObject
               );
               if (inShadow) {
-                imageData[y][x] = new Vector(60, 60, 60);
+                imageData[y][x] = new Vector(0, 0, 0);
               } else {
                 imageData[y][x] = new Vector(255, 255, 255).multiply(
                   dotProduct

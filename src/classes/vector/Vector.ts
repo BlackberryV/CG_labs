@@ -52,4 +52,7 @@ export default class Vector {
       this.x * v.y - this.y * v.x
     );
   }
+  public getLength(): number {
+    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+  }
 }

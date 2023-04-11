@@ -49,29 +49,35 @@ export default class Raytracer {
           }
         }
         if (closestIntersection) {
-          if (closestObject === null) {
+          let inShadow = false;
+          const shadowRay = new Ray(closestIntersection, lightDirection);
+  
+          for (const object of objects) {
+            if (object !== closestObject) {
+              const shadowIntersection = object.getIntersection(shadowRay);
+              if (
+                shadowIntersection &&
+                shadowIntersection.getDistanceTo(closestIntersection) <
+                  lightDirection.getLength()
+              ) {
+                inShadow = true;
+                break;
+              }
+            }
+          }
+  
+          if (inShadow) {
             imageData[y][x] = new Vector(0, 0, 0);
           } else {
-            const normal = closestObject.getNormal(this.camera.getPosition());
-            const dotProduct = normal.dot(lightDirection);
-            if (dotProduct < 0) {
+            if (closestObject === null) {
               imageData[y][x] = new Vector(0, 0, 0);
             } else {
-              const shadowRay = new Ray(
-                closestIntersection,
-                lightDirection.multiply(-1)
-              );
-              const inShadow = this.isInShadow(
-                shadowRay,
-                objects,
-                closestObject
-              );
-              if (inShadow) {
-                imageData[y][x] = new Vector(60, 60, 60);
+              const normal = closestObject.getNormal(this.camera.getPosition());
+              const dotProduct = normal.dot(lightDirection);
+              if (dotProduct < 0) {
+                imageData[y][x] = new Vector(0, 0, 0);
               } else {
-                imageData[y][x] = new Vector(255, 255, 255).multiply(
-                  dotProduct
-                );
+                imageData[y][x] = new Vector(255, 255, 255).multiply(dotProduct);
               }
             }
           }
@@ -112,9 +118,9 @@ export default class Raytracer {
     const cameraX =
       (screenX / halfScreenWidth) * aspectRatio * Math.tan(fov / 2);
     const cameraY = (-screenY / halfScreenHeight) * Math.tan(fov / 2);
-    const cameraZ = halfScreenWidth / Math.tan(fov / 2);
+    const cameraZ = 1;
 
-    const rayDirection = new Vector(cameraX, cameraY, cameraZ);
+    const rayDirection = new Vector(-cameraX, -cameraY, cameraZ);
 
     if (transformatioinSequence) {
       const transformaedRay = transformationFactory(

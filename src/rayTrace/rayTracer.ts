@@ -49,35 +49,26 @@ export default class Raytracer {
           }
         }
         if (closestIntersection) {
-          let inShadow = false;
-          const shadowRay = new Ray(closestIntersection, lightDirection);
-  
-          for (const object of objects) {
-            if (object !== closestObject) {
-              const shadowIntersection = object.getIntersection(shadowRay);
-              if (
-                shadowIntersection &&
-                shadowIntersection.getDistanceTo(closestIntersection) <
-                  lightDirection.getLength()
-              ) {
-                inShadow = true;
-                break;
-              }
-            }
-          }
-  
-          if (inShadow) {
+          if (closestObject === null) {
             imageData[y][x] = new Vector(0, 0, 0);
           } else {
-            if (closestObject === null) {
+            const normal = closestObject.getNormal(this.camera.getPosition());
+            const dotProduct = normal.dot(lightDirection);
+            if (dotProduct < 0) {
               imageData[y][x] = new Vector(0, 0, 0);
             } else {
-              const normal = closestObject.getNormal(this.camera.getPosition());
-              const dotProduct = normal.dot(lightDirection);
-              if (dotProduct < 0) {
-                imageData[y][x] = new Vector(0, 0, 0);
+              const shadowRay = new Ray(closestIntersection, lightDirection);
+              const inShadow = this.isInShadow(
+                shadowRay,
+                objects,
+                closestObject
+              );
+              if (inShadow) {
+                imageData[y][x] = new Vector(60, 60, 60);
               } else {
-                imageData[y][x] = new Vector(255, 255, 255).multiply(dotProduct);
+                imageData[y][x] = new Vector(255, 255, 255).multiply(
+                  dotProduct
+                );
               }
             }
           }

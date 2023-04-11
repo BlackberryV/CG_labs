@@ -4,6 +4,10 @@ import Ray from '../classes/ray/Ray';
 import Camera from '../classes/camera/Camera';
 import Screen from '../classes/screen/Screen';
 import Triangle from '../classes/triangle/Triangle';
+import {
+  MatrixTransformations,
+  transformationFactory,
+} from '../services/matrixTransformationFactory';
 
 export default class Raytracer {
   private camera: Camera;
@@ -14,14 +18,19 @@ export default class Raytracer {
     this.screen = screen;
   }
 
-  trace(objects: Triangle[], lightDirection: Vector, outputFile: string): void {
+  trace(
+    objects: Triangle[],
+    lightDirection: Vector,
+    outputFile: string,
+    rayTransformationSequence?: MatrixTransformations[]
+  ): void {
     const imageData: Vector[][] = [];
 
     for (let y = 0; y < this.screen.getHeight(); y++) {
       imageData[y] = [];
 
       for (let x = 0; x < this.screen.getWidth(); x++) {
-        const ray = this.calculateRay(x, y);
+        const ray = this.calculateRay(x, y, rayTransformationSequence);
 
         // let color = new Vector(0,0,0);
         let closestIntersection: Vector | null = null;
@@ -43,7 +52,7 @@ export default class Raytracer {
           if (closestObject === null) {
             imageData[y][x] = new Vector(0, 0, 0);
           } else {
-            const normal = closestObject.getNormal(closestIntersection);
+            const normal = closestObject.getNormal(this.camera.getPosition());
             const dotProduct = normal.dot(lightDirection);
             if (dotProduct < 0) {
               imageData[y][x] = new Vector(0, 0, 0);
@@ -52,7 +61,11 @@ export default class Raytracer {
                 closestIntersection,
                 lightDirection.multiply(-1)
               );
-              const inShadow = this.isInShadow(shadowRay, objects, closestObject);
+              const inShadow = this.isInShadow(
+                shadowRay,
+                objects,
+                closestObject
+              );
               if (inShadow) {
                 imageData[y][x] = new Vector(60, 60, 60);
               } else {
@@ -83,7 +96,11 @@ export default class Raytracer {
     }
   }
 
-  private calculateRay(x: number, y: number): Ray {
+  private calculateRay(
+    x: number,
+    y: number,
+    transformatioinSequence?: MatrixTransformations[]
+  ): Ray {
     const halfScreenWidth = this.screen.getWidth() / 2;
     const halfScreenHeight = this.screen.getHeight() / 2;
     const fov = this.camera.getFOV();
@@ -95,23 +112,33 @@ export default class Raytracer {
     const cameraX =
       (screenX / halfScreenWidth) * aspectRatio * Math.tan(fov / 2);
     const cameraY = (-screenY / halfScreenHeight) * Math.tan(fov / 2);
+    const cameraZ = halfScreenWidth / Math.tan(fov / 2);
 
-    return new Ray(
-      this.camera.getPosition(),
-      new Vector(-cameraX, -cameraY, 1)
-    );
+    const rayDirection = new Vector(cameraX, cameraY, cameraZ);
+
+    if (transformatioinSequence) {
+      const transformaedRay = transformationFactory(
+        transformatioinSequence,
+        rayDirection
+      );
+      return new Ray(this.camera.getPosition(), transformaedRay);
+    }
+
+    return new Ray(this.camera.getPosition(), rayDirection);
   }
-  private isInShadow(shadowRay: Ray, objects: any[], closestObject: any): boolean {
+
+  private isInShadow(
+    shadowRay: Ray,
+    objects: any[],
+    closestObject: any
+  ): boolean {
     let inShadow = false;
     for (const object of objects) {
-      if (
-        object !== closestObject &&
-        object.getIntersection(shadowRay)
-      ) {
+      if (object !== closestObject && object.getIntersection(shadowRay)) {
         inShadow = true;
         break;
       }
     }
-    return inShadow
+    return inShadow;
   }
 }

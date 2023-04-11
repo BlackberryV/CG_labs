@@ -1,10 +1,10 @@
-import Vector from "../vector/Vector";
-import Ray from "../ray/Ray";
+import Vector from '../vector/Vector';
+import Ray from '../ray/Ray';
 
 export default class Triangle {
-  private vertex1: Vector;
-  private vertex2: Vector;
-  private vertex3: Vector;
+  public vertex1: Vector;
+  public vertex2: Vector;
+  public vertex3: Vector;
 
   constructor(v1: Vector, v2: Vector, v3: Vector) {
     this.vertex1 = v1;
@@ -43,7 +43,23 @@ export default class Triangle {
     return null; // intersection point is behind the origin of our ray
   }
 
-  getNormal(point: Vector): Vector {
-    return new Vector(0,0,-1);
+  getNormal(cameraPosition: Vector): Vector {
+    const edge1 = this.vertex2.subtract(this.vertex1);
+    const edge2 = this.vertex3.subtract(this.vertex1);
+    const normal = edge1.cross(edge2).normalize();
+
+    const toCamera = cameraPosition.subtract(this.getCenter());
+    const dotProduct = normal.dot(toCamera);
+
+    if (dotProduct < 0) {
+      return normal.multiply(-1);
+    } else {
+      return normal;
+    }
+  }
+
+  getCenter(): Vector {
+    const sum = this.vertex1.add(this.vertex2).add(this.vertex3);
+    return new Vector(sum.x / 3, sum.y / 3, sum.z / 3);
   }
 }

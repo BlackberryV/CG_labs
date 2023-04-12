@@ -8,7 +8,8 @@ import {
   MatrixTransformations,
 } from './services/matrixTransformationFactory';
 import ObjReader from './services/ObjReader/ObjReader';
-import Writer from './classes/writer/Writer';
+import WriterToFile from './classes/writer/WriterToFile';
+import WriterToConsole from './classes/writer/WriterToConsole';
 
 const camera = new Camera(30, new Vector(0, 1.5, -5));
 const screen = new Screen(100, 100);
@@ -54,8 +55,8 @@ const matrixTransformations: MatrixTransformations[] = [
   },
 ];
 
-const imageData = rayTracer.trace(triangles, lightDirection, undefined, matrixTransformations);
+const imageData = rayTracer.trace(triangles, lightDirection);
 
-const writer = new Writer(imageData)
+const writer = outputFile ? new WriterToFile(imageData, outputFile) : new WriterToConsole(imageData)
 
-writer.write(outputFile);
+writer.write();

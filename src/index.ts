@@ -8,9 +8,10 @@ import {
   MatrixTransformations,
 } from './services/matrixTransformationFactory';
 import ObjReader from './services/ObjReader/ObjReader';
+import Writer from './classes/writer/Writer';
 
 const camera = new Camera(30, new Vector(0, 1.5, -5));
-const screen = new Screen(10, 10);
+const screen = new Screen(100, 100);
 const rayTracer = new Raytracer(camera, screen);
 
 const objects = [
@@ -35,7 +36,7 @@ const triangles = ObjReader.readObjFile(src ? src : 'teapot.obj');
 
 const lightDirection = new Vector(-0.5, -0.5, -1).normalize();
 
-const outputFile = out ? out :'output.ppm';
+const outputFile = out;
 
 const matrixTransformations: MatrixTransformations[] = [
   {
@@ -53,4 +54,8 @@ const matrixTransformations: MatrixTransformations[] = [
   },
 ];
 
-rayTracer.trace(triangles, lightDirection,outputFile);
+const imageData = rayTracer.trace(triangles, lightDirection, undefined, matrixTransformations);
+
+const writer = new Writer(imageData)
+
+writer.write(outputFile);

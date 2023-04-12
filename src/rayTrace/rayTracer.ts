@@ -21,7 +21,7 @@ export default class Raytracer {
   trace(
     objects: Triangle[],
     lightDirection: Vector,
-    outputFile: string,
+    outputFile?: string,
     rayTransformationSequence?: MatrixTransformations[]
   ): number[][] {
     const imageData: number[][] = [];
@@ -74,19 +74,20 @@ export default class Raytracer {
           imageData[y][x] = 0;
         }
       }
-      const header = `P3\n${this.screen.getWidth()} ${this.screen.getHeight()}\n255\n`;
-      const body = imageData
-        .map((row) =>
-          row
-            .map(
-              (v) => `${v}`
-            )
-            .join(' ')
-        )
-        .join('\n');
+      // const header = `P3\n${this.screen.getWidth()} ${this.screen.getHeight()}\n255\n`;
+      // const body = imageData
+      //   .map((row) =>
+      //     row
+      //       .map(
+      //         (v) => `${v}`
+      //       )
+      //       .join(' ')
+      //   )
+      //   .join('\n');
 
-      const fileData = `${header}${body}`;
-      fs.writeFileSync(outputFile, fileData);
+      // const fileData = `${header}${body}`;
+      // fs.writeFileSync(outputFile, fileData);
+
     }
     return imageData
   }

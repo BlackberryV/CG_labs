@@ -10,10 +10,8 @@ import {
 import ObjReader from './services/ObjReader/ObjReader';
 
 const camera = new Camera(30, new Vector(0, 1.5, -5));
-const screen = new Screen(300, 300);
+const screen = new Screen(10, 10);
 const rayTracer = new Raytracer(camera, screen);
-
-// Instead of objects[] we will have this:
 
 const objects = [
   new Triangle(
@@ -33,7 +31,7 @@ const outArg = args.find(arg => arg.includes('--out='));
 const out = outArg ? outArg.split('=')[1] : null;
 
 
-const triangles = ObjReader.readObjFile(src ? src : 'teapot.obj').concat(objects);
+const triangles = ObjReader.readObjFile(src ? src : 'teapot.obj');
 
 const lightDirection = new Vector(-0.5, -0.5, -1).normalize();
 

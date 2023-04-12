@@ -23,8 +23,8 @@ export default class Raytracer {
     lightDirection: Vector,
     outputFile: string,
     rayTransformationSequence?: MatrixTransformations[]
-  ): void {
-    const imageData: Vector[][] = [];
+  ): number[][] {
+    const imageData: number[][] = [];
 
     for (let y = 0; y < this.screen.getHeight(); y++) {
       imageData[y] = [];
@@ -32,7 +32,7 @@ export default class Raytracer {
       for (let x = 0; x < this.screen.getWidth(); x++) {
         const ray = this.calculateRay(x, y, rayTransformationSequence);
 
-        // let color = new Vector(0,0,0);
+        let dotProduct = 0;
         let closestIntersection: Vector | null = null;
         let closestObject = null;
 
@@ -50,12 +50,12 @@ export default class Raytracer {
         }
         if (closestIntersection) {
           if (closestObject === null) {
-            imageData[y][x] = new Vector(0, 0, 0);
+            imageData[y][x] = 0;
           } else {
             const normal = closestObject.getNormal(this.camera.getPosition());
-            const dotProduct = normal.dot(lightDirection);
+            dotProduct = normal.dot(lightDirection);
             if (dotProduct < 0) {
-              imageData[y][x] = new Vector(0, 0, 0);
+              imageData[y][x] = 0;
             } else {
               const shadowRay = new Ray(closestIntersection, lightDirection);
               const inShadow = this.isInShadow(
@@ -64,25 +64,22 @@ export default class Raytracer {
                 closestObject
               );
               if (inShadow) {
-                imageData[y][x] = new Vector(0, 0, 0);
+                imageData[y][x] = 0;
               } else {
-                imageData[y][x] = new Vector(255, 255, 255).multiply(
-                  dotProduct
-                );
+                imageData[y][x] = dotProduct;
               }
             }
           }
         } else {
-          imageData[y][x] = new Vector(0, 0, 0);
+          imageData[y][x] = 0;
         }
       }
-
       const header = `P3\n${this.screen.getWidth()} ${this.screen.getHeight()}\n255\n`;
       const body = imageData
         .map((row) =>
           row
             .map(
-              (v) => `${Math.round(v.x)} ${Math.round(v.y)} ${Math.round(v.z)}`
+              (v) => `${v}`
             )
             .join(' ')
         )
@@ -91,12 +88,13 @@ export default class Raytracer {
       const fileData = `${header}${body}`;
       fs.writeFileSync(outputFile, fileData);
     }
+    return imageData
   }
 
   private calculateRay(
     x: number,
     y: number,
-    transformatioinSequence?: MatrixTransformations[]
+    transformationSequence?: MatrixTransformations[]
   ): Ray {
     const halfScreenWidth = this.screen.getWidth() / 2;
     const halfScreenHeight = this.screen.getHeight() / 2;
@@ -113,12 +111,12 @@ export default class Raytracer {
 
     const rayDirection = new Vector(-cameraX, -cameraY, cameraZ);
 
-    if (transformatioinSequence) {
-      const transformaedRay = transformationFactory(
-        transformatioinSequence,
+    if (transformationSequence) {
+      const transformedRay = transformationFactory(
+        transformationSequence,
         rayDirection
       );
-      return new Ray(this.camera.getPosition(), transformaedRay);
+      return new Ray(this.camera.getPosition(), transformedRay);
     }
 
     return new Ray(this.camera.getPosition(), rayDirection);
@@ -126,8 +124,8 @@ export default class Raytracer {
 
   private isInShadow(
     shadowRay: Ray,
-    objects: any[],
-    closestObject: any
+    objects: Triangle[],
+    closestObject: Triangle
   ): boolean {
     let inShadow = false;
     for (const object of objects) {

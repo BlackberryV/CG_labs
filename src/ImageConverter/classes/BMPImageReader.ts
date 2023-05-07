@@ -7,6 +7,15 @@ export interface IImageData {
 }
 
 export class BMPImageReader extends ImageReader {
+
+  public validate(bitmap: Buffer): boolean {
+    if (bitmap[0] !== 0x42 || bitmap[1] !== 0x4D) {
+      return false
+    }
+    const bpp = bitmap.readUInt16LE(28);
+    return bpp === 24;
+  }
+
   public readImage(bitmap: Buffer): IImageData {
     if (bitmap[0] !== 0x42 || bitmap[1] !== 0x4D) {
       throw new Error("Invalid BMP24 format");

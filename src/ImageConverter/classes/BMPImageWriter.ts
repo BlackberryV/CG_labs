@@ -3,7 +3,13 @@ import fs from "fs";
 import {IImageData} from "./BMPImageReader";
 
 export class BMPImageWriter extends ImageWriter {
+
+  validate(format: string): boolean {
+    return format === "bmp";
+  }
   writeImage(outFile: string, imageData: IImageData): void {
+
+
     const fileHeaderSize = 14;
     const infoHeaderSize = 40;
     const rowSize = Math.ceil(imageData.width * 3 / 4) * 4;

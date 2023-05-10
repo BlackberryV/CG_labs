@@ -30,12 +30,14 @@ export class ImageConverterFactory {
     for (const key in this.readersMap) {
       if (this.readersMap[key].validate(bitMap)) {
         reader = this.readersMap[key];
+        break;
       }
     }
 
     for (const key in this.writersMap) {
       if (this.writersMap[key].validate(goalFormat)) {
         writer = this.writersMap[key];
+        break;
       }
     }
 

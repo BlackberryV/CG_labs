@@ -1,18 +1,17 @@
-import {ImageWriter} from "../abstract/ImageWriter";
-import fs from "fs";
-import {IImageData} from "./BMPImageReader";
+import fs from 'fs';
+
+import { ImageWriter } from '../abstract/ImageWriter';
+import { IImageData } from './BMPImageReader';
 
 export class BMPImageWriter extends ImageWriter {
-
   validate(format: string): boolean {
-    return format === "bmp";
+    return format === 'bmp';
   }
+
   writeImage(outFile: string, imageData: IImageData): void {
-
-
     const fileHeaderSize = 14;
     const infoHeaderSize = 40;
-    const rowSize = Math.ceil(imageData.width * 3 / 4) * 4;
+    const rowSize = Math.ceil((imageData.width * 3) / 4) * 4;
     const pixelArraySize = rowSize * imageData.height;
     const fileSize = fileHeaderSize + infoHeaderSize + pixelArraySize;
 
@@ -20,7 +19,7 @@ export class BMPImageWriter extends ImageWriter {
     const infoHeaderOffset = fileHeaderSize;
 
     fileBuffer.writeUInt8(0x42, 0);
-    fileBuffer.writeUInt8(0x4D, 1);
+    fileBuffer.writeUInt8(0x4d, 1);
     fileBuffer.writeUInt32LE(fileSize, 2);
     fileBuffer.writeUInt32LE(0, 6);
     fileBuffer.writeUInt32LE(fileHeaderSize + infoHeaderSize, 10);
@@ -46,9 +45,18 @@ export class BMPImageWriter extends ImageWriter {
         const pixelIndex = y * imageData.width + x;
         const pixelOffsetInRow = x * 3;
 
-        fileBuffer.writeUInt8(imageData.data[pixelIndex * 3 + 2], rowOffset + pixelOffsetInRow);
-        fileBuffer.writeUInt8(imageData.data[pixelIndex * 3 + 1], rowOffset + pixelOffsetInRow + 1);
-        fileBuffer.writeUInt8(imageData.data[pixelIndex * 3], rowOffset + pixelOffsetInRow + 2);
+        fileBuffer.writeUInt8(
+          imageData.data[pixelIndex * 3 + 2],
+          rowOffset + pixelOffsetInRow
+        );
+        fileBuffer.writeUInt8(
+          imageData.data[pixelIndex * 3 + 1],
+          rowOffset + pixelOffsetInRow + 1
+        );
+        fileBuffer.writeUInt8(
+          imageData.data[pixelIndex * 3],
+          rowOffset + pixelOffsetInRow + 2
+        );
       }
     }
 

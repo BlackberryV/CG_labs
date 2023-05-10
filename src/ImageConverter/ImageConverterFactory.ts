@@ -1,10 +1,9 @@
-import { getInvalidFileFormatErrorText } from '../helpers';
 import { ImageConverter } from './classes/ImageConverter';
-import {ImageReader} from "./abstract/ImageReader";
-import {ImageWriter} from "./abstract/ImageWriter";
-import {BMPImageReader} from "./classes/BMPImageReader";
-import {GIFImageReader} from "./classes/GIFImageReader";
-import {BMPImageWriter} from "./classes/BMPImageWriter";
+import { ImageReader } from './abstract/ImageReader';
+import { ImageWriter } from './abstract/ImageWriter';
+import { BMPImageReader } from './classes/BMPImageReader';
+import { GIFImageReader } from './classes/GIFImageReader';
+import { BMPImageWriter } from './classes/BMPImageWriter';
 
 export enum ImageType {
   GIF = 'gif',
@@ -12,27 +11,36 @@ export enum ImageType {
 }
 
 export class ImageConverterFactory {
-  public static createImageConverter(readType: string, writeType: string): ImageConverter {
-    let reader: ImageReader;
-    let writer: ImageWriter;
-    switch (readType) {
-      case ImageType.BMP:
-        reader = new BMPImageReader();
-        break;
-      case ImageType.GIF:
-        reader = new GIFImageReader();
-        break;
-      default:
-        throw new Error(getInvalidFileFormatErrorText(readType));
-    }
-    switch (writeType) {
-      case ImageType.BMP:
-        writer = new BMPImageWriter();
-        break;
-      default:
-        throw new Error(getInvalidFileFormatErrorText(writeType));
+  public static writersMap: Record<string, ImageWriter> = {
+    [ImageType.BMP]: new BMPImageWriter(),
+  };
+
+  public static readersMap: Record<string, ImageReader> = {
+    [ImageType.BMP]: new BMPImageReader(),
+    [ImageType.GIF]: new GIFImageReader(),
+  };
+
+  public static createImageConverter(
+    bitMap: Buffer,
+    goalFormat: string
+  ): ImageConverter {
+    let reader: ImageReader | null = null;
+    let writer: ImageWriter | null = null;
+
+    for (const key in this.readersMap) {
+      if (this.readersMap[key].validate(bitMap)) {
+        reader = this.readersMap[key];
+      }
     }
 
-    return new ImageConverter(reader, writer)
+    for (const key in this.writersMap) {
+      if (this.writersMap[key].validate(goalFormat)) {
+        writer = this.writersMap[key];
+      }
+    }
+
+    if (reader === null || writer === null) throw new Error('invalid format');
+
+    return new ImageConverter(reader, writer);
   }
 }

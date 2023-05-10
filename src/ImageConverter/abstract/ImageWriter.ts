@@ -1,4 +1,4 @@
-import {IImageData} from "../classes/BMPImageReader";
+import { IImageData } from '../classes/BMPImageReader';
 
 export abstract class ImageWriter {
   public abstract validate(format: string): boolean;

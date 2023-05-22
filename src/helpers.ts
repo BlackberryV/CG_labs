@@ -6,6 +6,6 @@ export const getFileExtension = (arg?: string) =>
 
 export const getInvalidFileFormatErrorText = (fileFormat?: string) => {
   return fileFormat
-    ? `you are trying to open .${fileFormat} file, but only .bmp and .gif files are supported`
+    ? `you are trying to open .${fileFormat} file, but only .bmp and .png files are supported`
     : 'you must enter --source param to open a file';
 };

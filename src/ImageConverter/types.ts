@@ -1,5 +1,5 @@
 export enum ImageType {
-  GIF = 'gif',
+  PNG = 'png',
   BMP = 'bmp',
   PPM = 'ppm',
 }

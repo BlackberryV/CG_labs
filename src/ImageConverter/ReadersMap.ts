@@ -6,6 +6,6 @@ import { PPMImageReader } from "./classes/PPMImageReader";
 
 export const readersMap: Record<string, ImageReader> = {
   [ImageType.BMP]: new BMPImageReader(),
-  [ImageType.GIF]: new GIFImageReader(),
+  [ImageType.PNG]: new GIFImageReader(),
   [ImageType.PPM]: new PPMImageReader(),
 };

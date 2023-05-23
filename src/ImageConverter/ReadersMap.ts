@@ -1,11 +1,11 @@
 import { ImageReader } from './abstract/ImageReader';
 import { BMPImageReader } from './classes/BMPImageReader';
-import { GIFImageReader } from './classes/GIFImageReader';
+import { PNGImageReader } from './classes/PNGImageReader';
 import { ImageType } from './types';
-import { PPMImageReader } from "./classes/PPMImageReader";
+import { PPMImageReader } from './classes/PPMImageReader';
 
 export const readersMap: Record<string, ImageReader> = {
   [ImageType.BMP]: new BMPImageReader(),
-  [ImageType.PNG]: new GIFImageReader(),
+  [ImageType.PNG]: new PNGImageReader(),
   [ImageType.PPM]: new PPMImageReader(),
 };

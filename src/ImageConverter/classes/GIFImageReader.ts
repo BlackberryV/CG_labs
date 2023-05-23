@@ -59,23 +59,27 @@ export class GIFImageReader extends ImageReader {
     const width = headerChunk.data.readUInt32BE(0);
     const height = headerChunk.data.readUInt32BE(4);
   
-    const pixelData = new Uint8Array(width * height * 4);
+    const hasAlpha = dataChunks.some((chunk) => chunk.type === 'tRNS');
+    const pixelData = new Uint8Array(width * height * (hasAlpha ? 4 : 3));
     let dataIndex = 0;
   
     for (let y = 0; y < height; y++) {
-      const scanlineStart = y * (width * 4 + 1) + 1;
+      const scanlineStart = y * (width * 3 + 1);
   
       for (let x = 0; x < width; x++) {
-        const scanlineIndex = scanlineStart + x * 4;
+        const scanlineIndex = scanlineStart + x * 3;
         const red = inflatedData[scanlineIndex];
         const green = inflatedData[scanlineIndex + 1];
         const blue = inflatedData[scanlineIndex + 2];
-        const alpha = inflatedData[scanlineIndex + 3];
   
-          pixelData[dataIndex++] = red;
-          pixelData[dataIndex++] = green;
-          pixelData[dataIndex++] = blue;
+        pixelData[dataIndex++] = red;
+        pixelData[dataIndex++] = green;
+        pixelData[dataIndex++] = blue;
+  
+        if (hasAlpha) {
+          const alpha = 255;
           pixelData[dataIndex++] = alpha;
+        }
       }
     }
   
